@@ -1,0 +1,30 @@
+Include Libraries: Standard libraries like <stdio.h>, <stdlib.h>, <string.h>, and <math.h> are included for input/output, memory management, string manipulation, and mathematical operations, respectively.
+
+Tensor Structure Definition:
+
+The Tensor structure is defined to represent a tensor object, including:
+float* data: A pointer to the data in the tensor (array of floats).
+int* strides: A pointer to an array that defines the stride of each dimension (how far you need to move in memory to get to the next element in that dimension).
+int* shape: A pointer to an array defining the shape (size in each dimension) of the tensor.
+int ndim: The number of dimensions in the tensor.
+int size: The total number of elements in the tensor.
+char* device: A placeholder for device information (like "CPU" or "GPU"). It’s not currently used in this code but might be part of a broader design.
+create_tensor Function:
+
+The function create_tensor takes a pointer to the tensor’s data (float* data), its shape (int* shape), and the number of dimensions (int ndim).
+It then initializes a new Tensor structure.
+Memory Allocation and Validation:
+
+malloc is used to allocate memory for the Tensor object.
+A null check follows to ensure successful memory allocation.
+Size Calculation:
+
+tensor->size is initialized to 1.
+A loop iterates through the shape array to compute the total number of elements (size), multiplying across each dimension (e.g., for a 3x3 matrix, size = 3 * 3 = 9).
+Strides Calculation:
+
+The strides array is created with malloc.
+Strides are calculated by iterating in reverse through the dimensions to determine how much memory should be skipped to reach the next element along each dimension.
+Return Tensor:
+
+Finally, the function returns the pointer to the newly created Tensor object.
