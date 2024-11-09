@@ -1,0 +1,85 @@
+The `get_item` function retrieves a specific element from the tensor using multi-dimensional indices. It calculates the location of the desired element within the flat `data` array by using **strides**. This makes accessing elements in the tensor fast and efficient.
+
+Let’s go through it step-by-step.
+
+### Function Definition and Parameters
+
+```c
+float get_item(Tensor* tensor, int* indices)
+```
+
+- **`Tensor* tensor`**: A pointer to the tensor you want to access.
+- **`int* indices`**: An array containing the indices for each dimension. For example, if the tensor has shape `[3, 4]`, the `indices` array might be `[1, 2]`, indicating the element in the 1st row and 2nd column.
+
+### Purpose
+
+The function calculates a **flattened index** in the `data` array from the multi-dimensional `indices` and retrieves the corresponding element.
+
+### How It Works
+
+#### Step 1: Initialize the Index
+
+```c
+int index = 0;
+```
+
+The `index` variable will hold the computed location within the flattened `data` array.
+
+#### Step 2: Calculate the Flattened Index
+
+```c
+for(int i = 0; i < tensor->ndim; i++){
+    index += indices[i] * tensor->strides[i];
+}
+```
+
+This loop iterates over each dimension, using `indices[i]` and `tensor->strides[i]` to compute the flattened index.
+
+Here’s a breakdown of what each part is doing:
+
+- **`indices[i]`**: The position along dimension `i` that you want to access.
+- **`tensor->strides[i]`**: The stride for dimension `i`, which tells you how many elements to skip in the flattened array to move by 1 step along that dimension.
+
+By multiplying `indices[i] * tensor->strides[i]` and adding it to `index`, we calculate the correct position in `data` for the specified `indices`.
+
+#### Example Calculation
+
+Let’s say we have a tensor with shape `[3, 4]` (3 rows and 4 columns), and the following properties:
+- `shape = [3, 4]`
+- `strides = [4, 1]` (meaning we need to skip 4 elements to move along the first dimension and 1 element to move along the second dimension)
+  
+Suppose `indices = [1, 2]`, meaning we want the element in the 1st row and 2nd column.
+
+**Calculation:**
+```c
+index = indices[0] * strides[0] + indices[1] * strides[1];
+index = 1 * 4 + 2 * 1;
+index = 4 + 2;
+index = 6;
+```
+
+So `index = 6`, and we’ll use this index to look up the correct element in the `data` array.
+
+#### Step 3: Retrieve the Element
+
+```c
+float result;
+result = tensor->data[index];
+```
+
+Once `index` is calculated, `tensor->data[index]` retrieves the actual value at that position in the flat `data` array. This is assigned to `result`.
+
+#### Step 4: Return the Result
+
+```c
+return result;
+```
+
+Finally, the function returns `result`, which is the value of the tensor element at the specified indices.
+
+### Summary
+
+The `get_item` function:
+1. Computes the correct flat index in `data` using `indices` and `strides`.
+2. Accesses the element at that index.
+3. Returns the element, allowing for fast, efficient element retrieval from multi-dimensional tensors.

@@ -1,0 +1,66 @@
+This function reshape_tensor allows you to change the shape of a tensor without modifying its data. It’s important that the new shape has the same total number of elements as the original tensor, or it won’t make sense (you’d either lose or add data). Let’s go step-by-step:
+
+Function Definition and Inputs
+
+Tensor* reshape_tensor(Tensor* tensor, int* new_shape, int new_ndim)
+Tensor* tensor: The original tensor you want to reshape.
+int* new_shape: An array specifying the desired dimensions of the reshaped tensor.
+int new_ndim: The number of dimensions in the new_shape array.
+Step 1: Initialize New Shape and Check Memory Allocation
+
+new_ndim;
+int* shape = (int*)malloc(ndim * sizeof(int));
+if(shape == NULL){
+    fprintf(stderr, "Memory allocation failed\n");
+    exit(1);
+}
+
+Here:
+ndim is set to new_ndim, the number of dimensions in the new shape.
+A new shape array is allocated to store this new shape.
+If memory allocation fails (returns NULL), it prints an error and exits.
+Step 2: Copy the New Shape into the Shape Array
+
+
+for(int i = 0; i < ndim; i++){
+    shape[i] = new_shape[i];
+}
+This loop copies each dimension from new_shape into shape. This is necessary to avoid directly modifying the new_shape pointer and to store the new shape for the reshaped tensor.
+
+Step 3: Calculate the Total Number of Elements in the New Shape
+
+
+int size = 1;
+for(int i = 0; i < new_ndim; i++){
+    size *= shape[i];
+}
+Here, we compute the total number of elements required by the new shape by multiplying each dimension in shape. If new_shape were [3, 4], then size would be 3 * 4 = 12.
+
+Step 4: Check if the New Size Matches the Original Size
+
+if(size != tensor->size){
+    fprintf(stderr, "Cannot reshape tensor. Total number of elements in new shape does not match the current size of the tensor.\n");
+    exit(1);
+}
+This checks if the number of elements (size) calculated from the new_shape matches tensor->size (the number of elements in the original tensor). If they don’t match, reshaping isn’t possible since you’d either lose or gain data, so it prints an error and exits.
+
+Step 5: Allocate Space for the Data in the New Shape
+
+
+float* result_data = (float*)malloc(tensor->size * sizeof(float));
+if(result_data == NULL){
+    fprintf(stderr, "Memory allocation failed\n");
+    exit(1);
+}
+This allocates space for the result_data array, which will hold the tensor data in its reshaped form. The size of this array is set to the number of elements (tensor->size) to match the original data.
+
+Step 6: Assign Data from Original Tensor to result_data
+
+
+assign_tensor_cpu(tensor, result_data);
+This line assumes a function assign_tensor_cpu will copy the data from tensor->data to result_data. This keeps the original tensor’s data values but allows a new shape.
+
+Step 7: Create the Reshaped Tensor
+
+return create_tensor(result_data, shape, ndim);
+Finally, it calls create_tensor to construct a new tensor with result_data, the new shape, and ndim. The function returns this new reshaped tensor.

@@ -1,0 +1,83 @@
+This code defines a Tensor struct and a function, create_tensor, to initialize a tensor. Let's break down each component in detail.
+
+Tensor Struct Definition
+
+typedef struct{
+    float* data;
+    int* strides;
+    int* shape;
+    int ndim;
+    int size;
+    char* device;
+} Tensor;
+This struct represents a multi-dimensional array (or tensor) and holds essential metadata to make accessing and manipulating the data efficient.
+
+float* data: A pointer to the actual data of the tensor. This array contains all tensor elements in a flattened (single-dimensional) format. For example, a 2x3 matrix [ [1, 2, 3], [4, 5, 6] ] would be stored as data = [1, 2, 3, 4, 5, 6].
+
+int* strides: Strides represent the "step size" needed to move from one element to the next along each dimension. Strides allow efficient calculation of an element's position in the flattened data array. For instance, in a 2D array with shape [3, 4], the strides might be [4, 1] (4 elements for row shifts and 1 element for column shifts).
+
+int* shape: This array specifies the size of the tensor in each dimension. For example, if the tensor is a 3x4 matrix, shape = [3, 4].
+
+int ndim: The number of dimensions (or "rank") of the tensor. A matrix has ndim = 2, a vector has ndim = 1, and a scalar has ndim = 0.
+
+int size: The total number of elements in the tensor, calculated as the product of the dimensions in shape. For instance, a 3x4 matrix has size = 3 * 4 = 12.
+
+char* device: Indicates where the tensor's data is stored (e.g., "CPU" or "GPU"). This is useful if the tensor needs to work with hardware-accelerated operations.
+
+create_tensor Function
+The create_tensor function initializes a new tensor with provided data and shape information. Let's go through it line by line.
+
+Tensor* create_tensor(float* data, int* shape, int ndim){
+    Tensor* tensor = (Tensor*)malloc(sizeof(Tensor));
+    if(tensor == NULL){
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+Allocate Memory: The function first allocates memory for the tensor structure itself. If this allocation fails, it exits with an error.
+
+Set data, shape, and ndim:
+
+
+tensor->data = data;
+tensor->shape = shape;
+tensor->ndim = ndim;
+It then assigns data, shape, and ndim directly to the tensor. The data array is expected to be provided externally.
+
+Calculate size:
+
+tensor->size = 1;
+for(int i = 0; i < ndim; i++){
+    tensor->size *= shape[i];
+}
+The total number of elements (size) is calculated by multiplying each dimension in shape. This ensures that size reflects the total count of elements in the tensor.
+
+Allocate and Calculate strides:
+
+
+tensor->strides = (int*)malloc(ndim * sizeof(int));
+if(tensor->strides == NULL){
+    fprintf(stderr, "Memory allocation failed\n");
+    exit(1);
+}
+Memory is allocated for the strides array. Each stride represents the number of elements you need to skip in the flattened data array to move along each dimension.
+
+Compute Strides:
+int stride = 1;
+for(int i = ndim - 1; i >= 0; i--){
+    tensor->strides[i] = stride;
+    stride *= shape[i];
+}
+The strides are computed in reverse order (from the last dimension back to the first). This means the last dimension has a stride of 1, while previous dimensions have strides multiplied by the dimensions after them.
+
+Return the Initialized Tensor:
+
+return tensor;
+Finally, the function returns a pointer to the newly created tensor.
+
+Example of Usage
+If you create a 2D tensor with shape = [2, 3]:
+
+ndim will be 2, as there are two dimensions.
+size will be 2 * 3 = 6, since there are 6 elements in total.
+strides will be [3, 1], meaning you need to jump 3 elements to move along the first dimension and 1 element along the second.
+The create_tensor function sets up all these values so you can use the tensor efficiently, allowing fast access to any element using its multi-dimensional indices.
