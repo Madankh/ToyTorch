@@ -32,3 +32,42 @@ class Tensor:
             self.ndim_ctype,
         )
         
+
+    def flatten(self, nested_list):
+        """
+        This method simply convert a list type tensor to a flatten tensor with its shape
+        
+        Example:
+        
+        Arguments:  
+            nested_list: [[1, 2, 3], [-5, 2, 0]]
+        Return:
+            flat_data: [1, 2, 3, -5, 2, 0]
+            shape: [2, 3]
+        """
+        def flatten_recursively(nested_list):
+            flat_data = []
+            shape = []
+            if isinstance(nested_list, list):
+                for sublist in nested_list:
+                    inner_data, inner_shape = flatten_recursively(sublist)
+                    flat_data.extend(inner_data)
+                shape.append(len(nested_list))
+                shape.extend(inner_shape)
+            else:
+                flat_data.append(nested_list)
+            return flat_data, shape
+        flat_data, shape = flatten_recursively(nested_list)
+        return flat_data, shape
+    
+    def __getitem__(self, indics):
+        """
+        Access tensor by index tensor [i ,j ,k]
+        """
+        Tensor._C.get_item.argtypes = [ctypes.POINTER(CTensor), ctypes.POINTER(ctypes.c_int)]
+        Tensor.C.get_item.restype = ctypes.c_float
+
+        indices = (ctypes.c_int * len(indices))(*indices)
+        value = Tensor._C.get_item(self.tensor, indices)
+        return value
+    
