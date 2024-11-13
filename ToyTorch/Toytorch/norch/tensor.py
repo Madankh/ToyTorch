@@ -71,3 +71,31 @@ class Tensor:
         value = Tensor._C.get_item(self.tensor, indices)
         return value
     
+    def reshape(self, new_shape):
+        """
+        Reshape tensor
+        result = tensor.reshape([1,2])
+        """
+        new_shape_ctype = (ctypes.c_int * len(new_shape))(*new_shape)
+        new_ndim_ctype = ctypes.c_int(len(new_shape))
+
+        Tensor._C.reshape_tensor.argtypes = [ctypes.POINTER(CTensor), ctypes.POINTER(ctypes.c_int), ctypes.c_int]
+        Tensor._C.reshape_tensor.restype = ctypes.POINTER(CTensor)
+        result_tensor_ptr = Tensor._C.reshape_tensor(self.tensor, new_shape_ctype, new_ndim_ctype)
+
+        result_data = Tensor()
+        result_data.tensor = result_tensor_ptr
+        result_data.shape = new_shape.copy()
+        result_data_ndim = len(new_shape)
+        result_data_device = self.device
+
+        return result_data
+    
+    def __add__(self , other):
+        """
+        Add tensors
+        results = tensor1 + tensor2
+        """
+        if self.shape != other.shape:
+            raise ValueError("Tensors must have the same shape for addition")
+        Tensor._C.add_tensor.argtypes = 
