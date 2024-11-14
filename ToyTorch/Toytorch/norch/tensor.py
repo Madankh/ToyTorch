@@ -98,4 +98,15 @@ class Tensor:
         """
         if self.shape != other.shape:
             raise ValueError("Tensors must have the same shape for addition")
-        Tensor._C.add_tensor.argtypes = 
+        Tensor._C.add_tensor.argtypes = [ctypes.POINTER(CTensor), ctypes.POINTER(CTensor)]
+        Tensor._C.add_tensor.restype = ctypes.POINTER(CTensor)
+
+        result_tensor_ptr = Tensor._C.add_tensor(self.tensor, other.tensor)
+
+        result_data = Tensor()
+        result_data.tensor = result_tensor_ptr
+        result_data.shape = self.shape.copy()
+        result_data.ndim = self.ndim
+        result_data.device = self.device
+
+        return result_data
