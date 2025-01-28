@@ -11,7 +11,7 @@ typedef struct {
 } Tensor;
 
 extern "C" {
-    Tensor* create_tensor(float* data, int* shape, int ndim, char* device);
+    Tensor* create_tensor(float* data, int* shape, int ndim);
     void delete_tensor(Tensor* tensor);
     void delete_strides(Tensor* tensor);
     void delete_shape(Tensor* tensor);

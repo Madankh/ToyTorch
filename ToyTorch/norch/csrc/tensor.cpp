@@ -4,14 +4,14 @@
 #include<math.h>
 #include "cpu.h"
 
-typedef struct{
-    float* data;
-    int *strides;
-    int* shape;
-    int ndim;
-    int size;
-    char* device;
-} Tensor;
+// typedef struct{
+//     float* data;
+//     int *strides;
+//     int* shape;
+//     int ndim;
+//     int size;
+//     char* device;
+// } Tensor;
 
 Tensor* create_tensor(float* data, int* shape, int ndim){
     Tensor* tensor = (Tensor*)malloc(sizeof(Tensor));
@@ -89,7 +89,7 @@ Tensor* reshape_tensor(Tensor* tensor, int* new_shape, int new_ndim){
     int* shape = (int*)malloc(ndim*sizeof(int));
     if(shape == NULL){
         fprintf(stderr, "Memory allocation failed\n");
-        exit(1)
+        exit(1);
     }
     for(int i=0; i<ndim; i++){
         shape[i] = new_shape[i];

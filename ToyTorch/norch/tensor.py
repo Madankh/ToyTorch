@@ -13,8 +13,8 @@ class CTensor(ctypes.Structure):
 
 
 class Tensor:
-    library_path = r'C:\Users\Ryzen\Downloads\toyTorch\ToyTorch\Toytorch\norch\csrc\COMPILED_LIB.so'
-    _C = ctypes.CDLL(library_path)
+    current_dir = os.path.abspath(os.curdir)
+    _C = ctypes.CDLL(os.path.join(current_dir, "norch/csrc", "COMPILED_LIB.so"))
 
     def __init__(self):
         
